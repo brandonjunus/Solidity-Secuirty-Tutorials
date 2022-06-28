@@ -2,10 +2,10 @@
 pragma solidity 0.8.15;
 
 /**
- * @title Bank
- * @dev Somewhere to store your ETH
+ * @title UpgradedBank
+ * @dev Upgrade this contract to defend against the reenterency attack
  */
-contract Bank {
+contract UpgradedBank {
     /// @notice A mapping is just a hash table! In this case
     /// the keys are address and the values are uint256
     /// representing ETH values
@@ -22,10 +22,5 @@ contract Bank {
             msg.sender.call{value: balances[msg.sender]}("");
             balances[msg.sender] = 0;
         }
-    }
-
-    /// @notice Gets the value in ETH for this contract
-    function getValueOfContract() public view returns (uint256) {
-        return address(this).balance;
     }
 }

@@ -17,19 +17,18 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Bank__factory>;
     getContractFactory(
-      name: "Bank",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Bank__factory>;
-    getContractFactory(
       name: "HackBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.HackBank__factory>;
+    getContractFactory(
+      name: "VulerableBank",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.VulerableBank__factory>;
+    getContractFactory(
+      name: "UpgradedBank",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UpgradedBank__factory>;
 
-    getContractAt(
-      name: "Bank",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Bank>;
     getContractAt(
       name: "Bank",
       address: string,
@@ -40,6 +39,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.HackBank>;
+    getContractAt(
+      name: "VulerableBank",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.VulerableBank>;
+    getContractAt(
+      name: "UpgradedBank",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UpgradedBank>;
 
     // default types
     getContractFactory(
