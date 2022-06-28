@@ -16,11 +16,11 @@ contract Bank {
         balances[msg.sender] += msg.value;
     }
 
-    /// @notice Withdraw an amount of ETH from the bank
+    /// @notice Withdraw all ETH from the bank
     function withdraw() public {
         if (balances[msg.sender] >= 1) {
-            balances[msg.sender] = 0;
             msg.sender.call{value: balances[msg.sender]}("");
+            balances[msg.sender] = 0;
         }
     }
 

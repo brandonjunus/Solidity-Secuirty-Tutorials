@@ -3,8 +3,8 @@
 /* eslint-disable */
 import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
 import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import type { PromiseOrValue } from "../../common";
-import type { Bank, BankInterface } from "../../Reenterency/Bank";
+import type { PromiseOrValue } from "../common";
+import type { Bank, BankInterface } from "../Bank";
 
 const _abi = [
   {
