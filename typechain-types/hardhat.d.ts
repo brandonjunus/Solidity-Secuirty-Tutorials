@@ -13,42 +13,60 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Bank",
+      name: "DOSBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Bank__factory>;
+    ): Promise<Contracts.DOSBank__factory>;
     getContractFactory(
-      name: "HackBank",
+      name: "HackDOSBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HackBank__factory>;
+    ): Promise<Contracts.HackDOSBank__factory>;
     getContractFactory(
-      name: "VulerableBank",
+      name: "UpgradedDOSBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.VulerableBank__factory>;
+    ): Promise<Contracts.UpgradedDOSBank__factory>;
     getContractFactory(
-      name: "UpgradedBank",
+      name: "HackReenterencyBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UpgradedBank__factory>;
+    ): Promise<Contracts.HackReenterencyBank__factory>;
+    getContractFactory(
+      name: "ReenterencyBank",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReenterencyBank__factory>;
+    getContractFactory(
+      name: "UpgradedReenterencyBank",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UpgradedReenterencyBank__factory>;
 
     getContractAt(
-      name: "Bank",
+      name: "DOSBank",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Bank>;
+    ): Promise<Contracts.DOSBank>;
     getContractAt(
-      name: "HackBank",
+      name: "HackDOSBank",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.HackBank>;
+    ): Promise<Contracts.HackDOSBank>;
     getContractAt(
-      name: "VulerableBank",
+      name: "UpgradedDOSBank",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.VulerableBank>;
+    ): Promise<Contracts.UpgradedDOSBank>;
     getContractAt(
-      name: "UpgradedBank",
+      name: "HackReenterencyBank",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.UpgradedBank>;
+    ): Promise<Contracts.HackReenterencyBank>;
+    getContractAt(
+      name: "ReenterencyBank",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReenterencyBank>;
+    getContractAt(
+      name: "UpgradedReenterencyBank",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UpgradedReenterencyBank>;
 
     // default types
     getContractFactory(

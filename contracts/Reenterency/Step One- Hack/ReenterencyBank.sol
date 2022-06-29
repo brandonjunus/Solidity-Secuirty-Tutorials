@@ -2,13 +2,10 @@
 pragma solidity 0.8.15;
 
 /**
- * @title UpgradedBank
- * @dev Upgrade this contract to defend against the reenterency attack
+ * @title VulerableBank
+ * @dev A weak place to store your ETH
  */
-contract UpgradedBank {
-    /// @notice A mapping is just a hash table! In this case
-    /// the keys are address and the values are uint256
-    /// representing ETH values
+contract ReenterencyBank {
     mapping(address => uint256) public balances;
 
     /// @notice Deposit ETH into the bank

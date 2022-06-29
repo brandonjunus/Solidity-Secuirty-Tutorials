@@ -1,14 +1,13 @@
-import { VulerableBank } from "../../../typechain-types/Step One- Hack/VulerableBank";
-import { HackBank } from "../../../typechain-types/Reenterency/HackBank";
-import { Bank } from "../../../typechain-types/Reenterency/Bank";
+import { HackDOSBank } from "./../../../typechain-types/Denial of Service/Step One- Hack/HackDOSBank";
+import { DOSBank } from "./../../../typechain-types/Denial of Service/Step One- Hack/DOSBank";
 import { BigNumber, Signer } from "ethers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
 const ONE_ETHER: BigNumber = ethers.utils.parseEther("1");
 
-let vulerableBank: VulerableBank;
-let hackBank: HackBank;
+let victimBank: DOSBank;
+let hackBank: HackDOSBank;
 let deployer: Signer;
 let alice: Signer;
 let bob: Signer;
@@ -19,28 +18,29 @@ describe("Reenterency", function () {
     [deployer, alice, bob] = await ethers.getSigners();
 
     // deploy the bank contract
-    const VulerableBankFactory = await ethers.getContractFactory(
-      "VulerableBank"
-    );
-    vulerableBank = (await VulerableBankFactory.deploy()) as Bank;
+    const VictimBankFactory = await ethers.getContractFactory("DOSBank");
+    victimBank = (await VictimBankFactory.deploy()) as DOSBank;
 
-    // deploy the hackbank contract
-    const HackBankFactory = await ethers.getContractFactory("HackBank");
-    hackBank = (await HackBankFactory.deploy(vulerableBank.address, {
+    // deploy the hackbank contract with one ether
+    const HackBankFactory = await ethers.getContractFactory("HackDOSBank");
+    hackBank = (await HackBankFactory.deploy(victimBank.address, {
       value: ONE_ETHER,
-    })) as HackBank;
+    })) as HackDOSBank;
 
     // deposit 5 ether from alice
-    await vulerableBank.connect(alice).deposit({ value: ONE_ETHER.mul(5) });
+    await victimBank.connect(alice).deposit({ value: ONE_ETHER });
   });
 
   // Get this to pass!
-  it("Succesfully take all the ETH out of the contract", async () => {
-    await hackBank.hackContract();
+  it("Succesfully deny the bank from making interest payments", async () => {
+    await hackBank.deposit();
     const provider = ethers.provider;
-    const bankBalance = await provider.getBalance(vulerableBank.address);
-    expect(bankBalance).to.equal(0);
-    const hackBankBalance = await provider.getBalance(hackBank.address);
-    expect(hackBankBalance).to.equal(ONE_ETHER.mul(6));
+    const aliceBalanceBefore = await provider.getBalance(alice.getAddress());
+    // expect payInterest function to fail
+    await expect(victimBank.payInterest()).to.be.reverted;
+    // expect alice to not have received interest payment
+    expect(await provider.getBalance(alice.getAddress())).to.equal(
+      aliceBalanceBefore
+    );
   });
 });

