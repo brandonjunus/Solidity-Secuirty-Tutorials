@@ -19,8 +19,6 @@ contract UpgradedDOSBank {
 
     /// @notice Deposit ETH into the bank
     function deposit() public payable {
-        require(msg.value == 1 ether);
-        require(balances[msg.sender] == 0);
         balances[msg.sender] = 1 ether;
         members.push(payable(msg.sender));
     }

