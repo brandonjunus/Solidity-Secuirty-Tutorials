@@ -6,7 +6,7 @@ import "hardhat/console.sol";
  * @title VulerableBank
  * @dev A weak place to store your ETH
  */
-contract ReenterencyBank {
+contract ReentrancyBank {
     mapping(address => uint256) public balances;
 
     /// @notice Deposit ETH into the bank

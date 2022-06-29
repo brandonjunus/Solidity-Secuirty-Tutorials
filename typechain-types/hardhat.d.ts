@@ -13,55 +13,55 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "DOSBank",
+      name: "DOSKing",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.DOSBank__factory>;
+    ): Promise<Contracts.DOSKing__factory>;
     getContractFactory(
-      name: "HackDOSBank",
+      name: "HackDOSKing",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HackDOSBank__factory>;
+    ): Promise<Contracts.HackDOSKing__factory>;
     getContractFactory(
-      name: "UpgradedDOSBank",
+      name: "UpgradedDOSKing",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UpgradedDOSBank__factory>;
+    ): Promise<Contracts.UpgradedDOSKing__factory>;
     getContractFactory(
-      name: "HackReenterencyBank",
+      name: "HackReentrancyBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HackReenterencyBank__factory>;
+    ): Promise<Contracts.HackReentrancyBank__factory>;
     getContractFactory(
-      name: "ReenterencyBank",
+      name: "ReentrancyBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ReenterencyBank__factory>;
+    ): Promise<Contracts.ReentrancyBank__factory>;
     getContractFactory(
       name: "UpgradedReenterencyBank",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UpgradedReenterencyBank__factory>;
 
     getContractAt(
-      name: "DOSBank",
+      name: "DOSKing",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.DOSBank>;
+    ): Promise<Contracts.DOSKing>;
     getContractAt(
-      name: "HackDOSBank",
+      name: "HackDOSKing",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.HackDOSBank>;
+    ): Promise<Contracts.HackDOSKing>;
     getContractAt(
-      name: "UpgradedDOSBank",
+      name: "UpgradedDOSKing",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.UpgradedDOSBank>;
+    ): Promise<Contracts.UpgradedDOSKing>;
     getContractAt(
-      name: "HackReenterencyBank",
+      name: "HackReentrancyBank",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.HackReenterencyBank>;
+    ): Promise<Contracts.HackReentrancyBank>;
     getContractAt(
-      name: "ReenterencyBank",
+      name: "ReentrancyBank",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ReenterencyBank>;
+    ): Promise<Contracts.ReentrancyBank>;
     getContractAt(
       name: "UpgradedReenterencyBank",
       address: string,

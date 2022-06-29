@@ -1,56 +1,58 @@
-import { UpgradedDOSBank } from "./../../../typechain-types/Denial of Service/Step Two- Defend/UpgradedDOSBank.sol/UpgradedDOSBank";
-import { HackDOSBank } from "../../../typechain-types/Denial of Service/Step One- Hack/HackDOSBank";
-import { DOSBank } from "../../../typechain-types/Denial of Service/Step One- Hack/DOSBank";
+import { UpgradedDOSKing } from "./../../../typechain-types/Denial of Service/Step Two- Defend/UpgradedDOSKing";
+import { HackDOSKing } from "./../../../typechain-types/Denial of Service/Step One- Hack/HackDOSKing";
+import { DOSKing } from "./../../../typechain-types/Denial of Service/Step One- Hack/DOSKing";
 import { BigNumber, Signer } from "ethers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
 const ONE_ETHER: BigNumber = ethers.utils.parseEther("1");
-const INTEREST: BigNumber = ethers.utils.parseEther(".001");
 
-let upgradedBank: UpgradedDOSBank;
-let hackBank: HackDOSBank;
+let upgradedDOSKing: UpgradedDOSKing;
+let hackDOSKing: HackDOSKing;
 let deployer: Signer;
 let alice: Signer;
 let bob: Signer;
 
-describe("DOS Defense", function () {
+describe("Denial of Service", function () {
   beforeEach(async () => {
     // gets different users from ethers
     [deployer, alice, bob] = await ethers.getSigners();
 
-    // deploy the bank contract
-    const VictimBankFactory = await ethers.getContractFactory(
-      "UpgradedDOSBank"
+    // deploy the DOSKing contract
+    const UpgradedDOSKingFactory = await ethers.getContractFactory(
+      "UpgradedDOSKing"
     );
-    upgradedBank = (await VictimBankFactory.deploy()) as UpgradedDOSBank;
+    upgradedDOSKing =
+      (await UpgradedDOSKingFactory.deploy()) as UpgradedDOSKing;
 
-    // deploy the hackbank contract with one ether
-    const HackBankFactory = await ethers.getContractFactory("HackDOSBank");
-    hackBank = (await HackBankFactory.deploy(upgradedBank.address, {
-      value: ONE_ETHER,
-    })) as HackDOSBank;
+    // deploy the HackDOSKing contract with one ether
+    const HackBankFactory = await ethers.getContractFactory("HackDOSKing");
+    hackDOSKing = (await HackBankFactory.deploy(
+      upgradedDOSKing.address
+    )) as HackDOSKing;
 
     // deposit 5 ether from alice
-    await upgradedBank.connect(alice).deposit({ value: ONE_ETHER });
+    await upgradedDOSKing.connect(alice).claimThrone({ value: ONE_ETHER });
   });
 
   // Get this to pass!
-  it("Succesfully allow the bank to make interest payments", async () => {
-    await hackBank.deposit();
+  it("Succesfully allow others to become king", async () => {
+    await hackDOSKing.becomeKing({ value: ONE_ETHER.mul(2) });
+
+    // bob should be able to reclaim the throne
+    await expect(
+      upgradedDOSKing.connect(bob).claimThrone({ value: ONE_ETHER.mul(3) })
+    ).to.not.be.reverted;
+
     const provider = ethers.provider;
     const aliceBalanceBefore = await provider.getBalance(alice.getAddress());
-    console.log("aliceBalanceBefore", aliceBalanceBefore);
-    // expect payInterest function to fail
-    await upgradedBank.payInterest();
-    expect(await upgradedBank.interestAccrued(alice.getAddress())).to.equal(
-      ONE_ETHER.div(1000)
-    );
-    // expect alice to not have received interest payment
-    await upgradedBank.connect(alice).withdrawInterest();
-    expect(await upgradedBank.interestAccrued(alice.getAddress())).to.equal(0);
-    expect(await provider.getBalance(alice.getAddress())).to.be.closeTo(
-      aliceBalanceBefore.add(INTEREST),
+    // expect alice to be able to withdraw after being overthrown as king
+    await upgradedDOSKing.connect(alice).withdraw();
+    // expect alice to have a balance of 0
+    expect(await upgradedDOSKing.balances(alice.getAddress())).to.equal(0);
+    // expect alice's account to have increased by (approximately) one ether
+    expect(await provider.getBalance(alice.getAddress())).closeTo(
+      aliceBalanceBefore.add(ONE_ETHER),
       ONE_ETHER.div(1000)
     );
   });

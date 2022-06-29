@@ -1,46 +1,43 @@
-import { HackDOSBank } from "./../../../typechain-types/Denial of Service/Step One- Hack/HackDOSBank";
-import { DOSBank } from "./../../../typechain-types/Denial of Service/Step One- Hack/DOSBank";
+import { HackDOSKing } from "./../../../typechain-types/Denial of Service/Step One- Hack/HackDOSKing";
+import { DOSKing } from "./../../../typechain-types/Denial of Service/Step One- Hack/DOSKing";
 import { BigNumber, Signer } from "ethers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
 const ONE_ETHER: BigNumber = ethers.utils.parseEther("1");
 
-let victimBank: DOSBank;
-let hackBank: HackDOSBank;
+let dosKing: DOSKing;
+let hackDOSKing: HackDOSKing;
 let deployer: Signer;
 let alice: Signer;
-let bob: Signer;
 
-describe("Reenterency", function () {
+describe("Denial of Service", function () {
   beforeEach(async () => {
     // gets different users from ethers
-    [deployer, alice, bob] = await ethers.getSigners();
+    [deployer, alice] = await ethers.getSigners();
 
-    // deploy the bank contract
-    const VictimBankFactory = await ethers.getContractFactory("DOSBank");
-    victimBank = (await VictimBankFactory.deploy()) as DOSBank;
+    // deploy the DOSKing contract
+    const DOSKingFactory = await ethers.getContractFactory("DOSKing");
+    dosKing = (await DOSKingFactory.deploy()) as DOSKing;
 
-    // deploy the hackbank contract with one ether
-    const HackBankFactory = await ethers.getContractFactory("HackDOSBank");
-    hackBank = (await HackBankFactory.deploy(victimBank.address, {
-      value: ONE_ETHER,
-    })) as HackDOSBank;
+    // deploy the HackDOSKing contract with one ether
+    const HackBankFactory = await ethers.getContractFactory("HackDOSKing");
+    hackDOSKing = (await HackBankFactory.deploy(
+      dosKing.address
+    )) as HackDOSKing;
 
     // deposit 5 ether from alice
-    await victimBank.connect(alice).deposit({ value: ONE_ETHER });
+    await dosKing.connect(alice).claimThrone({ value: ONE_ETHER });
   });
 
   // Get this to pass!
-  it("Succesfully deny the bank from making interest payments", async () => {
-    await hackBank.deposit();
-    const provider = ethers.provider;
-    const aliceBalanceBefore = await provider.getBalance(alice.getAddress());
-    // expect payInterest function to fail
-    await expect(victimBank.payInterest()).to.be.reverted;
-    // expect alice to not have received interest payment
-    expect(await provider.getBalance(alice.getAddress())).to.equal(
-      aliceBalanceBefore
-    );
+  it("Succesfully prevent others from becoming King", async () => {
+    await hackDOSKing.becomeKing({ value: ONE_ETHER.mul(2) });
+
+    // alice should be unable to reclaim the throne even when giving
+    // more ETH than the previous King
+    await expect(
+      dosKing.connect(alice).claimThrone({ value: ONE_ETHER.mul(3) })
+    ).to.be.reverted;
   });
 });

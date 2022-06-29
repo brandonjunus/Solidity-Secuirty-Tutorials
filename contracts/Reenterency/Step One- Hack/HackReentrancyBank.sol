@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
-import "./ReenterencyBank.sol";
+import "./ReentrancyBank.sol";
 
-contract HackReenterencyBank {
-    ReenterencyBank reenterencyBank;
+contract HackReentrancyBank {
+    ReentrancyBank reentrancyBank;
 
     constructor(address payable _bankAddress) payable {
-        reenterencyBank = ReenterencyBank(_bankAddress);
+        reentrancyBank = ReentrancyBank(_bankAddress);
     }
 
     function hackContract() external {
