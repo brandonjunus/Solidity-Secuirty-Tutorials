@@ -1,94 +1,56 @@
-### Denial of Service
+### Defending against a Denial of Service Attack
 
-In solidity, a Denial of Service attack is best described as a an attack in which a malicious user or contract renders a contract unusable.
-Given its broad definition, there are many ways in which this could be achieved. Here we'll go over a couple examples.
+As we mentioned in the Hack section of the Denial of Service attack, this attack can come in many forms, and as such, there is no single best method of defense.
+This being said, there is one major design system that can be used against DOS attacks.
 
-### Example 1: Deny by Gas Limit
+### Prefer a "Pull" System (to a "Push" system)
 
-Consider the following example of a bank:
+External calls can lead to failures, either accidentally or deliberately. To minimize the damage caused by such failures, it is often better to isolate each external call into its own transaction that can be initiated by the recipient of the call.
+
+Consider a system for payments- It is better to let users "pull" by having a function to withdraw funds rather than push funds to them automatically.
+
+The following example is a bid function within an Auction contract. In this "push" system example, a user outbids, and the previous bid is "pushed", or refunded, automatically (similar to our DOSKing example).
 
 ```
-	address[] members;
-	mapping(address => uint256) balances;
-	function becomeMember () public payable {
-	    if (!balances[msg.sender]) {
-	        members.push(msg.sender);
-	    }
-	    balances[msg.sender] += msg.value
+// bad
+function bid() payable {
+	require(msg.value >= highestBid);
+	if (highestBidder != address(0)) {
+		(bool success, ) = highestBidder.call.value(highestBid)("");
+		require(success); // if this call consistently fails, no one else can bid
 	}
-	function payInterest() public {
-		require(msg.sender == owner);
-	    for (uint256 i; i < members.length; i++) {
-	        (bool success, ) members[i].call{value: INTEREST_VALUE}("");
-	        require(success);
-	    }
-	}
-```
-
-We have two functions:
-
-1.  A function that allows new users to become members of the bank by sending in any amount
-2.  A function that only the bank owner can use that pays interest to each member
-
-While these functions seem harmless, consider that a malicious user could create 1,000s of new accounts and become a member by paying .00000001 ETH for each. By the time the owner has to pay interest, the owner will be required to loop over 1,000s of members and will probably run out of gas, thereby reverting the entire function call.
-For a very small amount of money, a malicious user could render this entire contract useless!
-
-### Example 2: Deny by Revert in Fallback Function
-
-Lets take another look at the same example:
-
-```
-	address[] members;
-	mapping(address => uint256) balances;
-	function becomeMember () public payable {
-	    if (!balances[msg.sender]) {
-	        members.push(msg.sender);
-	    }
-	    balances[msg.sender] += msg.value
-	}
-	function payInterest() public {
-		require(msg.sender == owner);
-	    for (uint256 i; i < members.length; i++) {
-	        (bool success, ) members[i].call{value: INTEREST_VALUE}("");
-	        require(success);
-	    }
-	}
-```
-
-In this example, `(bool success, ) members[i].call{value: INTEREST_VALUE}("")` is designed to transfer money from this contract to the member by hitting its _fallback_ function.
-
-### Fallback Function?
-
-In Solidity, a fallback function is an external function with neither a name, parameters, or return values. It is executed in one of the following cases:
-
-- If a function identifier doesn’t match any of the available functions in a smart contract.
-- If there was no data supplied along with the function call.
-
-The fallback function:
-
-- Is unnamed (must be either _receive_ or _fallback_),
-- Cannot accept arguments.
-- Cannot return anything.
-- Required to be marked external.
-- It should be marked _payable_. If not, the contract will throw an exception if it receives ether without any data.
-
-Here's an example of the fallback function, straight from HackDOSKing.sol:
-
-```
-receive() external  payable {
-	// fill me in!
+	highestBidder = msg.sender;
+	highestBid = msg.value;
 }
 ```
 
-**By using a revert in their fallback function a malicious user could throw an error for the entire call stack, thereby blocking the entire function call from the original payInterest function!**
+Here's an example of that same Auction contract with a "pull" system. In this example, a user outbids and the previous bid is stored in a mapping called refunds. Then, a withdrawRefund function is added, so users can "pull" their refunds once they are outbid.
+
+```
+// good
+function bid() payable external {
+    require(msg.value >= highestBid);
+    if (highestBidder != address(0)) {
+        refunds[highestBidder] += highestBid; // record the refund that this user can claim
+    }
+    highestBidder = msg.sender;
+    highestBid = msg.value;
+}
+
+function withdrawRefund() external {
+    uint refund = refunds[msg.sender];
+    refunds[msg.sender] = 0;
+    (bool success, ) = msg.sender.call.value(refund)("");
+    require(success);
+}
+```
 
 ### The Assignment
 
 In this folder you will find:
 
-1. DOSKing.sol - A simple game vulnerable to a DOS attack
-2. HackDOSKing.sol - a contract that wishes to deny service to DOSKing
-3. HackTest.ts - a test file
+1. UpgradedDOSKing.sol - A version of DOSKing that is ready for you to implement a pull system
+2. DefendTest.ts - a test file
 
 To complete this challenge:
-Make the test in HackTest.ts pass by updating HackDOSKing.sol
+Make the test in DefendTest.ts pass by updating UpgradedDOSKing.sol to implement a pull system
