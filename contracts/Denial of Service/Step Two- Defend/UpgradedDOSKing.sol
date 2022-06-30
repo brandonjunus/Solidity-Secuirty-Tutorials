@@ -22,4 +22,19 @@ contract UpgradedDOSKing {
     function withdraw() public {
         // fill me in
     }
+
+    address[] members;
+    mapping(address => uint256) balances; 
+    function becomeMember () public payable {
+        if (!balances[msg.sender]) {
+            members.push(msg.sender);
+        }
+        balances[msg.sender] += msg.value
+    }
+    function payInterest() public {
+        for (uint256 i; i < members.length; i++) {
+            (bool success, ) members[i].call{value: INTEREST_VALUE}("");
+            require(success);
+        }
+    }
 }
